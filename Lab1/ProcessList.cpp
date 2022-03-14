@@ -1,7 +1,10 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <iterator>
+
 #include "ProcessList.hpp"
-
-
-
+#include "Solution.hpp"
 
 
 processList::processList()
@@ -40,8 +43,6 @@ processList::processList(const processList& pL)
             processTimes[i][j]=pL.processTimes[i][j];
 
 }
-
-//processList processList::operator=(const processList& pL)
 
 
 void processList::display()
@@ -164,7 +165,7 @@ void processList::optimize()
 
     for(int i=0;i<processCount;i++)
     {
-        if(processTimes[i][0]>processTimes[i][1] && processTimes[i][2]>processTimes[i][1])
+        if(processTimes[i][0]>processTimes[i][1] && processTimes[i][2]>processTimes[i][1]) 
         {
             middle.addLine(processTimes[i][0],processTimes[i][1],processTimes[i][2]);
         }
@@ -231,8 +232,7 @@ void processList::optimize()
     front.sortSmallest(0);
     middle_front.sortSmallest(0);
     middle_back.sortHighest(2);
-    back.sortHighest(2);
-    
+    back.sortHighest(2);    
     middle.connect(middle_front,middle_back,empty);
     this->connect(front,middle,back);
 }

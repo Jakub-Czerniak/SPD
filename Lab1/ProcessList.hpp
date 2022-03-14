@@ -1,28 +1,17 @@
 #ifndef PROCESSLIST_HPP
 #define PROCESSLIST_HPP
 
-
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <iterator>
-
-
-
-
 class processList
 {
 private:
     int processCount;   //number of processes to optimize  
     int **processTimes; //matrix of 3 x processCount 
-
     
 public:
     processList();
-    processList(std::istream& data);//std::istream& is
+    processList(const processList& pL);//copy constructor
+    processList(std::istream& data);
     ~processList();
-
-    processList(const processList& pL);
     processList operator=(const processList& pL)
     {
         for(int i=0;i<processCount;i++)
@@ -42,13 +31,12 @@ public:
     }
 
     void addLine(int a, int b, int c); //adds line of process times to the furthest row
-    void display();
+    void display(); //displays matrix of processTimes
     void connect(processList front, processList middle, processList back); //merges three process lists back into one 
     void sortSmallest(int column); //sort processTimes from smallest to highest by specified column values
     void sortHighest(int column);
     int timeOnMachine();//returns time in which all processes will be finished 
-    
-    void optimize();
+    void optimize();//optimazes time spend on machine of the whole process
 };
 
 
