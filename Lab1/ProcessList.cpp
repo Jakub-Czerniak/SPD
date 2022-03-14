@@ -161,21 +161,25 @@ void processList::optimize()
     processList back;
     processList empty;
     std::vector<int> combination;
-    bool equals, found;
+    bool equals=false;
+    bool used[processCount]{};
 
     for(int i=0;i<processCount;i++)
     {
         if(processTimes[i][0]>processTimes[i][1] && processTimes[i][2]>processTimes[i][1]) 
         {
             middle.addLine(processTimes[i][0],processTimes[i][1],processTimes[i][2]);
+            used[i]=true;
         }
         else if(processTimes[i][0]<processTimes[i][2])
         {
             front.addLine(processTimes[i][0],processTimes[i][1],processTimes[i][2]);
+            used[i]=true;
         }
         else if(processTimes[i][0]>processTimes[i][2])
         {
             back.addLine(processTimes[i][0],processTimes[i][1],processTimes[i][2]);
+            used[i]=true;
         }
         else if(processTimes[i][0]==processTimes[i][2])
         {
@@ -189,32 +193,28 @@ void processList::optimize()
     }
     if(equals==true) //data2 alg
     {
-        int sum_r;
+        int sum_r=0;
         std::vector<int> result; 
-        for(int i=0; i<middle.processCount;i++)
-            sum_r+=middle.processTimes[i][0]; 
+
+        for(int i=0; i<middle.processCount ;i++)
+                sum_r+=middle.processTimes[i][0]; //sum of all middle waiting times
+
         result=sol.combinationSum(combination, sum_r);
-        std::copy(result.begin(), result.end(), std::ostream_iterator<int>(std::cout, " "));
-        std::cout<<std::endl;
         if(!result.empty())
             for(int i=0;i<result.size();i++)
-                for(int j=0; j<processCount && !found;i++)
-                    if(result[i]==processTimes[j][1])
+                for(int j=0; j<processCount ;j++)
+                    if(result[i]==processTimes[j][1] && used[j]!=true)
                     {
                         front.addLine(processTimes[j][0],processTimes[j][1],processTimes[j][2]);
-                        found=true;
-                    }      
-                    else
-                    {
-                        back.addLine(processTimes[j][0],processTimes[j][1],processTimes[j][2]);
-                    }      
-                    std::cout<<std::endl;
-                    front.display();
-                    std::cout<<std::endl;
-                    middle.display();
-                    std::cout<<std::endl;
-                    back.display();
-                    std::cout<<std::endl;
+                        used[j]=true;
+                    }       
+
+            for(int j=0; j<processCount ;j++)
+                if(used[j]!=true)
+                {
+                    back.addLine(processTimes[j][0],processTimes[j][1],processTimes[j][2]);
+                }
+
     }
 
     for(int i=0;i<middle.processCount;i++)
@@ -240,9 +240,13 @@ void processList::optimize()
 
 int processList::timeOnMachine()
 {
-    int i;
+    int i=0;
     bool finished, finished_b;
-    for(i=0;finished!=true ;i++)
+
+    if(processTimes[processCount-1][2]==0) //if the last cooling time is equal to zero the loop is executed with out doing anything
+        i-=1;
+
+    for(i;finished!=true ;i++)
     {
         finished_b=false;
         finished=true;
@@ -256,7 +260,6 @@ int processList::timeOnMachine()
             else if(processTimes[j][1]!=0 && (j==0 || processTimes[j-1][1]==0) && finished_b==false)
             {
             processTimes[j][1]-=1;
-            if(processTimes[j][2]!=0)
             finished=false;
             finished_b=true;
             }
@@ -267,5 +270,6 @@ int processList::timeOnMachine()
             }            
         }
     }
+        
     return i;
 }
