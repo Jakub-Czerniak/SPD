@@ -3,7 +3,8 @@
 
 #include "Solution.hpp"
 
-
+//Zawartość tego pliku jest zmodyfikowaną przezemnie wersją, w celu zwracania tylko jednej odpowiedzi bez używania 
+//dwa razy tej samej wartości, algorytmu rekurencyjnego CombinationSum 
     void Solution::doWork(std::vector<int> &candidates, int index, std::vector<int> &current, int currentSum, int target, std::vector<int> &ans) 
     {
         if (currentSum > target) {

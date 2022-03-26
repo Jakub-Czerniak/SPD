@@ -21,7 +21,7 @@ int main()
     auto stop = high_resolution_clock::now(); 
     auto duration = duration_cast<microseconds>(stop - start);
     duration_whole+=duration.count();
-    //mainList.display();
+    mainList.display();
     std::cout<< "Time spend on machine: "<<mainList.timeOnMachine()<<std::endl;
 
     std::ifstream inputStream2{"data2"};
@@ -32,7 +32,7 @@ int main()
     stop = high_resolution_clock::now(); 
     duration = duration_cast<microseconds>(stop - start);
     duration_whole+=duration.count();
-    //mainList.display();
+    mainList.display();
     std::cout<< "Time spend on machine: "<<mainList.timeOnMachine()<<std::endl;
 
     std::ifstream inputStream3{"data3"};
@@ -43,7 +43,7 @@ int main()
     stop = high_resolution_clock::now(); 
     duration = duration_cast<microseconds>(stop - start);
     duration_whole+=duration.count();
-    //mainList.display();
+    mainList.display();
     std::cout<< "Time spend on machine: "<<mainList.timeOnMachine()<<std::endl;
 
     std::ifstream inputStream4{"data4"};
@@ -54,7 +54,7 @@ int main()
     stop = high_resolution_clock::now(); 
     duration = duration_cast<microseconds>(stop - start);
     duration_whole+=duration.count();
-    //mainList.display();
+    mainList.display();
     std::cout<< "Time spend on machine: "<<mainList.timeOnMachine()<<std::endl;
     
     std::cout << std::endl;
