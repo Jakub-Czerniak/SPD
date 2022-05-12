@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <queue>
+#include <chrono>
 
 //bez akcerelacji n^3 * n
 //akcerelacja obliczenie najdluzszej sciezki 3n^2*m
@@ -27,9 +28,8 @@ void neh(std::ifstream &inputStream)
     std::priority_queue <std::pair<int,int>, std::vector<std::pair<int, int>>, myComp> weightedTasks;
     int dataCount, taskCount, machineCount, cmax, min, minPos, weight, taskID = 0;
 
-    //std::ifstream inputStream{"data.txt"};
     inputStream >> dataCount;
-    dataCount = 10;
+
 
     for(int dt=0; dt<=dataCount; dt++)
     {
@@ -102,19 +102,27 @@ void neh(std::ifstream &inputStream)
 
 }
 
-void qneh(/*std::ifstream &inputStream*/)
+void qneh(std::ifstream &inputStream)
 {
     int processTable[500][20];
     int cmaxTable[501][21];
     int cmaxTableBackward[501][21];
-    int tempCmax[3];
+    int tempCmax[20];
     std::vector <int> order;
     std::priority_queue <std::pair<int,int>, std::vector<std::pair<int, int>>, myComp> weightedTasks;
     int dataCount, taskCount, machineCount, cmax, min, minPos, weight, taskID = 0;
 
-    std::ifstream inputStream{"data.txt"};
+    
     inputStream >> dataCount;
-    dataCount=10;
+
+    for(int i=0;i<501;i++)
+        cmaxTable[i][0]=0;
+    for(int i=0;i<21;i++)
+        cmaxTable[0][i]=0;
+
+    for(int i=0;i<501;i++)
+        for(int j=0;j<21;j++)
+            cmaxTableBackward[i][j]=0;
       
     for(int dt=0; dt<=dataCount; dt++)
     {
@@ -123,7 +131,7 @@ void qneh(/*std::ifstream &inputStream*/)
         for(int task = 0; task<taskCount; task++)
             for(int mc=0; mc<machineCount; mc++)
                 inputStream >> processTable[task][mc];
-
+        
         for(int task = 1; task<=taskCount; task++)
         {
             weight=0;
@@ -139,21 +147,11 @@ void qneh(/*std::ifstream &inputStream*/)
         weightedTasks.pop();
         order.push_back(0);
 
-        for(int i=0;i<=taskCount;i++)
-            cmaxTable[i][0]=0;
-        for(int i=0;i<=machineCount;i++)
-            cmaxTable[0][i]=0;
-
-        for(int i=0;i<=taskCount;i++)
-            for(int j=0;j<=machineCount;j++)
-                cmaxTableBackward[i][j]=0;
-
         for (int task = 1; task< taskCount; task++)
         {
             min=INT32_MAX;
 
             taskID=weightedTasks.top().second;
-            //std::cout<<taskID<<std::endl;
             weightedTasks.pop();
 
             for(int i = 1; i <= task; i++)
@@ -163,53 +161,60 @@ void qneh(/*std::ifstream &inputStream*/)
             for(int i = task; i > 0 ; i--)
                 for(int mc = machineCount; mc > 0 ; mc--)      
                     cmaxTableBackward[ order[i] ][mc-1] = std::max(cmaxTableBackward[ order[i+1] ][mc-1],cmaxTableBackward[ order[i] ][mc]) + processTable[order[i]-1][mc-1];
-            //std::cout<<"cmax backward" << std::endl;
-            /*for(int i = 0; i <=task ; i++)
-            {
-                for(int mc = 0; mc <= machineCount; mc++) 
-                {
-                    std::cout<<cmaxTableBackward[order[i]][mc]<< ' ' ;
-                }
-            std::cout<<std::endl;
-            }*/
+
 
             for(int pos=0;pos<=task;pos++ )
             {
                 tempCmax[0]= cmaxTable[ order[pos] ][ 1 ] + processTable[taskID-1][0];
+                
                 for(int mc=1;mc<machineCount;mc++)
                     tempCmax[mc]= std::max(cmaxTable[order[pos]][mc+1],tempCmax[mc-1]) + processTable[taskID-1][mc];
-                //tempCmax[2]= std::max(cmaxTable[order[pos]][3],tempCmax[1]) + processTable[taskID-1][2];
-                //std::cout<< tempCmax[0] <<" "<< tempCmax[1] <<" "<< tempCmax[2] <<" "<<std::endl;
+
                 for(int mc=0; mc<machineCount; mc++)
-                {
                     cmax= std::max(cmax , cmaxTableBackward[ order[pos+1] ][mc] + tempCmax[mc] );
-                    //std::cout<< cmaxTableBackward[order[pos+1]][mc]<< " + "<< tempCmax[mc] <<std::endl;
-                }
-                //std::cout<<"cmaxss"<< cmax<<std::endl;
+
                 if(cmax<min)
                 {
                     minPos=pos+1;
                     min=cmax;
                 }  
-                cmax=0;          
-            }   
+                cmax=0;        
+            }    
             order.insert(order.begin()+minPos,taskID);
         }
 
         std::cout<<"min: "<<min<<std::endl;  
-        //inputStream.close();
+
         for(int i=1; i<order.size()-1;i++)
           std::cout << order[i] << ' ';
         std::cout << std::endl;
-
         order.clear();
+
     }
 }
 
 
 int main()
 {
-    //std::ifstream inputStream{"data.txt"};
-    qneh();
+    std::ifstream inputStream{"data.txt"};
+    int nehTime, qnehTime=0;
+    auto start = std::chrono::high_resolution_clock::now();
+    neh(inputStream);
+    auto stop = std::chrono::high_resolution_clock::now(); 
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    nehTime=duration.count();
+
+    inputStream.clear();                
+    inputStream.seekg(0, std::ios::beg);
+
+    start = std::chrono::high_resolution_clock::now();
+    qneh(inputStream);
+    stop = std::chrono::high_resolution_clock::now(); 
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    qnehTime=duration.count();
+
+    std::cout<< "Czas trwanie neh: "<< nehTime << " mikrosekund." <<std::endl;
+    std::cout<< "Czas trwanie qneh: "<< qnehTime << " mikrosekund."<<std::endl;
+    
     return 0;
 }
