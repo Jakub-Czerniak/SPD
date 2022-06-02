@@ -62,9 +62,8 @@ struct myComp {
             {
                 minPos=pos-1;
                 min=cmax;
-            }            
-        }   
-          
+            }     
+        }        
         order.insert(order.begin()+minPos,taskID);
     }
     for(int i = 0; i < taskCount; i++)
@@ -150,7 +149,7 @@ std::pair<int,std::vector<int>> qneh(int processTable[500][20], int taskCount, i
 
 int main()
 {
-    int dataCount, taskCount, machineCount, nehTime, qnehTime, nehAbsoluteTime, qnehAbsoluteTime = 0;
+    int dataCount, taskCount, machineCount, nehTime, qnehTime, nehAbsoluteTime = 0, qnehAbsoluteTime = 0;
     int processTable[500][20];
     std::pair <int, std::vector<int>> result;
     std::chrono::_V2::system_clock::time_point start,stop;
@@ -167,7 +166,7 @@ int main()
         for(int task = 0; task<taskCount; task++)
             for(int mc=0; mc<machineCount; mc++)
                 inputStream >> processTable[task][mc];
-        std::cout << "NEH data" << dt <<std::endl;
+        std::cout << "NEH data" << dt << "\\\\"<<std::endl;
         start = std::chrono::high_resolution_clock::now();
         result=neh(processTable,taskCount,machineCount);
         stop = std::chrono::high_resolution_clock::now(); 
@@ -175,13 +174,24 @@ int main()
         nehTime=duration.count();
         for (int i: result.second)
                 std::cout << i << ' ';
-        std::cout << std::endl;
-        std::cout << "MinCmax: " << result.first << std::endl;
-        std::cout << "Czas trwania: " << nehTime << std::endl << std::endl;
+        std::cout << "\\\\"<< std::endl;
+        std::cout << "MinCmax: " << result.first << "\\\\"<< std::endl;
+        std::cout << "Czas trwania: " << nehTime << "\\\\"<< std::endl << std::endl;
         nehAbsoluteTime+=nehTime;
+    /*}
+    inputStream.clear();
+    inputStream.seekg (0, std::ios::beg);
 
-
-        std::cout << "QNEH data" << dt <<std::endl;
+    inputStream>>dataCount;
+    std::cout<<std::endl<<std::endl<<std::endl;
+    for(int dt=0; dt<=dataCount; dt++)
+    {
+        inputStream >> taskCount;
+        inputStream >> machineCount;
+        for(int task = 0; task<taskCount; task++)
+            for(int mc=0; mc<machineCount; mc++)
+                inputStream >> processTable[task][mc];*/
+        std::cout << "QNEH data" << dt << "\\\\" <<std::endl;
         start = std::chrono::high_resolution_clock::now();
         result=qneh(processTable,taskCount,machineCount);
         stop = std::chrono::high_resolution_clock::now(); 
@@ -189,14 +199,14 @@ int main()
         qnehTime=duration.count();
         for (int i: result.second)
                 std::cout << i << ' ';
-        std::cout << std::endl;
-        std::cout << "MinCmax: " << result.first << std::endl;
-        std::cout << "Czas trwania: " << qnehTime << std::endl << std::endl;
+        std::cout<< "\\\\" << std::endl;
+        std::cout << "MinCmax: " << result.first<< "\\\\" << std::endl;
+        std::cout << "Czas trwania: " << qnehTime << "\\\\"<< std::endl << std::endl;
         qnehAbsoluteTime+=qnehTime;
     }
 
-    std::cout<< "Calkowity czas trwanie neh: "<< nehAbsoluteTime << " mikrosekund." <<std::endl;
-    std::cout<< "Calkowity czas trwanie qneh: "<< qnehAbsoluteTime << " mikrosekund."<<std::endl;
+    std::cout<< "Calkowity czas trwanie neh: "<< nehAbsoluteTime << " mikrosekund."<< "\\\\" <<std::endl;
+    std::cout<< "Calkowity czas trwanie qneh: "<< qnehAbsoluteTime << " mikrosekund."<< "\\\\"<<std::endl;
     
     return 0;
 }
